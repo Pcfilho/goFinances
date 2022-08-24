@@ -8,7 +8,7 @@ export const Container = styled.View`
 
 export const Header = styled.View`
     background-color: ${({ theme }) => theme.colors.primary };
-
+    
     width: 100%;
     height: ${RFValue(80)}px;
 
@@ -26,21 +26,11 @@ export const Title = styled.Text`
 
 `;
 
-export const Form = styled.View`
-    flex: 1;
-    justify-content: space-between;
+export const Content = styled.ScrollView.attrs({
+    contentContainerStyle: {flex: 1, padding: 24}
+})``;
+
+export const ChartContainer = styled.View`
     width: 100%;
-
-    padding: 24px;
+    align-items: center;
 `;
-
-export const Fields = styled.View``;
-
-export const TransactionTypes = styled.View`
-    flex-direction: row;
-    justify-content: space-between;
-
-    margin-top: 8px;
-    margin-bottom: 16px;
-`;
-
