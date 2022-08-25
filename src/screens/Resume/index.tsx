@@ -1,7 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { VictoryPie } from 'victory-native';
+import { useBottomTabBarHeight } from '@react-navigation/bottom-tabs';
+import { addMonths, subMonths, format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
+
+import { useTheme } from 'styled-components';
 import { HistoryCard } from '../../components/HistoryCard';
 import {
     Container,
@@ -9,9 +15,16 @@ import {
     Title,
     Content,
     ChartContainer,
+    MonthSelect,
+    MonthSelectButton,
+    MonthSelectIcon,
+    Month,
+    LoadContainer,
 } from './styles';
 
 import { categories } from '../../utils/categories';
+import { RFValue } from 'react-native-responsive-fontsize';
+import { useFocusEffect } from '@react-navigation/native';
 
 
 interface TransactionData {
@@ -28,24 +41,40 @@ interface CategoryData {
     color: string;
     total: number;
     totalFormatted: string;
+    percent: string;
 }
 
 export function Resume() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [selectedDate, setSelectedDate] = useState(new Date());
     const [totalByCategories, setTotalByCategories] = useState<CategoryData[]>([]);
+    const theme = useTheme();
 
+    function handleChangeData(action : 'next' | 'prev') {
+        if(action === 'next') {
+            setSelectedDate(addMonths(selectedDate, 1));
+        } else {
+            setSelectedDate(subMonths(selectedDate, 1));
+        };
+    }
 
     async function loadData() {
+        setIsLoading(true);
         const dataKey = '@goFinances:transactions';
         const data = await AsyncStorage.getItem(dataKey);
         const responseFormatted = data ? JSON.parse(data) : [];
 
         const expenses = responseFormatted
-        .filter((expensive : TransactionData) => expensive.type === 'negative');
+        .filter((expensive : TransactionData) => 
+        expensive.type === 'negative' && 
+        new Date(expensive.date).getMonth() === selectedDate.getMonth() &&
+        new Date(expensive.date).getFullYear() === selectedDate.getFullYear()
+        );
 
         const expensesTotal = expenses
         .reduce((acumullator : number, expense : TransactionData) => {
             return acumullator + Number(expense.amount);
-        });
+        }, 0);
 
         const totalByCategory: CategoryData[] = [];
 
@@ -58,31 +87,37 @@ export function Resume() {
                 };
             });
 
-            const totalFormatted = categorySum
-            .toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL',
-            });
-
             if(categorySum > 0) {
+                const totalFormatted = categorySum
+                .toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                });
+                
+                const percent = `${(categorySum / expensesTotal * 100).toFixed(0)}%`;
+
+
+
+
                 totalByCategory.push({
                     key: category.key,
                     name: category.name,
                     color: category.color,
                     total: categorySum,
                     totalFormatted,
+                    percent,
                 });
             };
         });
 
         setTotalByCategories(totalByCategory);
+        setIsLoading(false);
     };
 
 
-    useEffect(() => {
+    useFocusEffect(useCallback(() => {
         loadData();
-    }, []);
-
+    }, [selectedDate]));
 
     return (
         <Container>
@@ -90,26 +125,68 @@ export function Resume() {
                 <Title>Resumo por categoria</Title>
             </Header>
 
-            <ChartContainer>
-                <VictoryPie 
-                    data={totalByCategories}
-                    x="name"
-                    y="total"
-                />
-            </ChartContainer>
+            {
+                isLoading ?
+                <LoadContainer>
+                    <ActivityIndicator 
+                        color={theme.colors.primary} 
+                        size="large" 
+                    />
+                </LoadContainer>
+                : 
+                <Content
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{
+                        paddingHorizontal: 24,
+                        paddingBottom: useBottomTabBarHeight(),
+                    }}
+                >
+                    <MonthSelect>
+                        <MonthSelectButton
+                            onPress={() => handleChangeData('prev')}
+                        >
+                            <MonthSelectIcon name="chevron-left" />
+                        </MonthSelectButton>
 
-            <Content>
-                {
-                    totalByCategories.map(item => (
-                        <HistoryCard
-                            key={item.key}
-                            title={item.name}
-                            amount={item.totalFormatted}
-                            color={item.color}
+                        <Month>{ format(selectedDate, 'MMMM, yyyy', {locale: ptBR}) }</Month>
+
+                        <MonthSelectButton
+                            onPress={() => handleChangeData('next')}
+                        >
+                            <MonthSelectIcon name="chevron-right" />
+                        </MonthSelectButton>
+                    </MonthSelect>
+
+                    <ChartContainer>
+                        <VictoryPie 
+                            data={totalByCategories}
+                            colorScale={totalByCategories.map(category => category.color)}
+                            style={{
+                                labels: {
+                                    fontSize: RFValue(18),
+                                    fontWeight: 'bold',
+                                    fill: theme.colors.shape,
+                                }
+                            }}
+                            labelRadius={70}
+                            x="percent"
+                            y="total"
                         />
-                    ))
-                }
-            </Content>
+                    </ChartContainer>
+
+                    {
+                        totalByCategories.map(item => (
+                            <HistoryCard
+                                key={item.key}
+                                title={item.name}
+                                amount={item.totalFormatted}
+                                color={item.color}
+                            />
+                        ))
+                    }
+                </Content>
+            
+            }
         </Container>
     );
 };

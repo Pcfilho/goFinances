@@ -153,7 +153,10 @@ export function Dashboard() {
             {
                 isLoading ?
                 <LoadContainer>
-                    <ActivityIndicator color={theme.colors.primary} size="large" />
+                    <ActivityIndicator 
+                        color={theme.colors.primary} 
+                        size="large" 
+                    />
                 </LoadContainer>
                 : 
                 <>
@@ -167,9 +170,9 @@ export function Dashboard() {
                                 </User>
                             </UserInfo>
 
-                            {/* <LogoutButton>
+                            <LogoutButton>
                                 <Icon name="power"/>
-                            </LogoutButton> */}
+                            </LogoutButton>
                         </UserWrapper>
                     </Header>
                     
