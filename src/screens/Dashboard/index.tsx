@@ -10,7 +10,6 @@ import { TransactionCard, TransactionCardProps } from "../../components/Transact
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 
-
 import { 
     Container, 
     Header,
