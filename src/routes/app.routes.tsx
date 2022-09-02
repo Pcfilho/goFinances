@@ -10,6 +10,7 @@ const { Navigator, Screen } = createBottomTabNavigator();
 import { Dashboard } from '../screens/Dashboard';
 import { Register } from '../screens/Register';
 import { Resume } from '../screens/Resume';
+import { RFValue } from 'react-native-responsive-fontsize';
 
 export function AppRoutes() {
     const theme = useTheme();
@@ -22,7 +23,7 @@ export function AppRoutes() {
                 tabBarInactiveTintColor: theme.colors.text,
                 tabBarLabelPosition: 'beside-icon',
                 tabBarStyle: {
-                    height: 88,
+                    height: RFValue(80),
                 }
             }}
         >

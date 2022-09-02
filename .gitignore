@@ -56,3 +56,5 @@ dist/
 
 # TypeScript Config
 tsconfig.json
+
+.env

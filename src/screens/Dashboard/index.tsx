@@ -52,6 +52,10 @@ export function Dashboard() {
 
     const theme = useTheme();
 
+    function handleLogout() {
+        
+    }
+
     function getLastTransactionDate(
         collection : DataListProps[],
         type : 'positive' | 'negative'
@@ -169,7 +173,9 @@ export function Dashboard() {
                                 </User>
                             </UserInfo>
 
-                            <LogoutButton>
+                            <LogoutButton
+                                onPress={() => handleLogout()}
+                            >
                                 <Icon name="power"/>
                             </LogoutButton>
                         </UserWrapper>
