@@ -57,7 +57,7 @@ export const Amount = styled.Text<TypeProps>`
     font-size: ${RFValue(32)}px;
     
 
-    margin-top: ${RFValue(38)}px;
+    margin-top: ${RFValue(28)}px;
 
     color: ${({ theme, type }) =>
     type === 'total' ? theme.colors.shape : theme.colors.text_dark};

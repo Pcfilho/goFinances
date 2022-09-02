@@ -7,7 +7,6 @@ import { useTheme } from 'styled-components';
 
 import { HighlightCard } from "../../components/HighlightCard";
 import { TransactionCard, TransactionCardProps } from "../../components/TransactionCard";
-import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 
 import { 
@@ -27,6 +26,7 @@ import {
     LogoutButton,
     LoadContainer
 } from './styles';
+import { useAuth } from "../../hooks/auth";
 
 export interface DataListProps extends TransactionCardProps {
     id: string;
@@ -51,17 +51,23 @@ export function Dashboard() {
     const [highlightData, setHighlightData] = useState<HighlightData>({} as HighlightData);
 
     const theme = useTheme();
+    const { signOut, user } = useAuth();
 
-    function handleLogout() {
-        
-    }
+
 
     function getLastTransactionDate(
         collection : DataListProps[],
         type : 'positive' | 'negative'
-        ) {
+    ) {
+        const collectionFittered = collection
+        .filter(transaction => transaction.type === type);
+
+        if (collectionFittered.length === 0) 
+        return 0;
+
+
         const lastTransaction = new Date(
-        Math.max.apply(Math, collection
+        Math.max.apply(Math, collectionFittered
         .filter(transaction => transaction.type === type)
         .map(transaction => new Date(transaction.date).getTime())));
         
@@ -70,7 +76,7 @@ export function Dashboard() {
     }
 
     async function loadTransactions() {
-        const dataKey = '@goFinances:transactions';
+        const dataKey = `@goFinances:transactions_user:${user.id}`;
         const response = await AsyncStorage.getItem(dataKey).catch((e) => console.log(e));
         const transactions = response ? JSON.parse(response) : [];
 
@@ -112,7 +118,7 @@ export function Dashboard() {
 
         const lastTransactionsEntries = getLastTransactionDate(transactions, 'positive');
         const lastTransactionsExpenses = getLastTransactionDate(transactions, 'negative');
-        const totalInterval = `01 à ${lastTransactionsExpenses}`;
+        const totalInterval = lastTransactionsExpenses === 0 ? 'Não há transações' : `01 à ${lastTransactionsExpenses}`;
         
         const total = entriesTotal - expensiveTotal;
 
@@ -122,14 +128,14 @@ export function Dashboard() {
                     style: 'currency',
                     currency: 'BRL'
                 }),
-                lastTransaction: `Última entrada dia ${lastTransactionsEntries}`,
+                lastTransaction: lastTransactionsEntries === 0 ? 'Não há transações' : `Última entrada dia ${lastTransactionsEntries}`,
             },
             expenses: {
                 amount: expensiveTotal.toLocaleString('pt-BR', {
                     style: 'currency',
                     currency: 'BRL'
                 }),
-                lastTransaction: `Última saída dia ${lastTransactionsExpenses}`,
+                lastTransaction: lastTransactionsExpenses === 0 ? 'Não há transações' : `Última saída dia ${lastTransactionsExpenses}`,
             },
             total: {
                 amount: total.toLocaleString('pt-BR', {
@@ -166,15 +172,15 @@ export function Dashboard() {
                     <Header>
                         <UserWrapper>
                             <UserInfo>
-                                <Photo source={{ uri: 'https://avatars.githubusercontent.com/u/81891355?v=4'}} />
+                                <Photo source={{ uri: user.photo}} />
                                 <User>
                                     <UserGreeting>Olá, </UserGreeting>
-                                    <UserName>Paulo</UserName>
+                                    <UserName>{user.name}</UserName>
                                 </User>
                             </UserInfo>
 
                             <LogoutButton
-                                onPress={() => handleLogout()}
+                                onPress={signOut}
                             >
                                 <Icon name="power"/>
                             </LogoutButton>
