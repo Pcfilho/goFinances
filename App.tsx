@@ -1,9 +1,9 @@
 import React from 'react';
+import { StatusBar } from 'react-native';
 import AppLoading from 'expo-app-loading';
 import { ThemeProvider } from 'styled-components';
 import 'intl';
 import 'intl/locale-data/jsonp/pt-BR';
-import { StatusBar } from 'react-native';
 
 
 import {
@@ -15,8 +15,6 @@ import {
 
 import theme from './src/global/styles/theme';
 import { Routes } from './src/routes/index';
-
-import { SignIn } from './src/screens/SignIn';
 
 import { AuthProvider, useAuth } from './src/hooks/auth';
 
@@ -36,10 +34,7 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-        <StatusBar barStyle="light-content"/>
-          <AuthProvider>
-            <Routes />
-          </AuthProvider>
+        <Routes />
     </ThemeProvider>
   );
 }

@@ -11,7 +11,7 @@ export function Routes() {
     console.log(user);
     return (
         <NavigationContainer>
-            {user.id ? <AppRoutes/> : <AuthRoutes/>}
+            {user?.id ? <AppRoutes/> : <AuthRoutes/>}
         </NavigationContainer>
     );
 } 

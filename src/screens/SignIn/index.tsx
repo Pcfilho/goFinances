@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { ActivityIndicator, Alert, Platform } from 'react-native';
+import { ActivityIndicator, Alert, Platform, Text } from 'react-native';
 import { RFValue } from "react-native-responsive-fontsize";
 import { useTheme } from 'styled-components';
 
