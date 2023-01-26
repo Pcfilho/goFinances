@@ -34,7 +34,9 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      <AuthProvider>
         <Routes />
+      </AuthProvider>
     </ThemeProvider>
   );
 }
