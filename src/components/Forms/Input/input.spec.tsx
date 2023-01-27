@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React from 'react';
 import { render } from '@testing-library/react-native';
 import { Input } from '.';
@@ -11,7 +12,7 @@ const Providers: React.FC = ({ children }) => (
 )
 
 describe('Input Component', () => {
-    it('must have border when active', () => {
+    it('must have attention border color when active', () => {
         const { getByTestId } = render(
             <Input 
                 testID='input' 
@@ -24,6 +25,22 @@ describe('Input Component', () => {
 
         const inputComponent = getByTestId('input')
         
-        expect(inputComponent.props.style[0].borderColor).toEqual('#e83f5b')
+        expect(inputComponent.props.style[0].borderColor).toEqual(theme.colors.attention)
+    })
+
+    it('must have 3px border width when active', () => {
+        const { getByTestId } = render(
+            <Input 
+                testID='input' 
+                active 
+            />,
+            {
+                wrapper: Providers
+            }
+        );
+
+        const inputComponent = getByTestId('input')
+        
+        expect(inputComponent.props.style[0].borderWidth).toEqual(3)
     })
 })
