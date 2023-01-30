@@ -10,5 +10,6 @@
         "Resumo",
         "suas",
         "transações"
-    ]
+    ],
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }
