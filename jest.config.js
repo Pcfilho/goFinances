@@ -1,5 +1,5 @@
 const config = {
-    "preset": "react-native",
+    preset: "jest-expo",
     testPathIgnorePatterns: [
         '/node_modules',
         '/android',
@@ -12,6 +12,7 @@ const config = {
     transformIgnorePatterns: [
         "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|react-native-responsive-fontsize|native-base|react-native-svg)"
     ],
+    setupFiles: ["./jestSetupFile.js"]
 }
 
 module.exports = config
