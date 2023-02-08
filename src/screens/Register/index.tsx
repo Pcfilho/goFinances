@@ -70,7 +70,9 @@ export function Register() {
     };
 
     function handleOpenSelectCategoryModal() {
-        setCategoryModalOpen(true);
+        setTimeout(() => {
+            setCategoryModalOpen(true);
+        }, 1000);
     };
 
     function handleCloseSelectCategoryModal() {
@@ -163,7 +165,8 @@ export function Register() {
                             />
                         </TransactionTypes>
                         
-                        <CategorySelectButton 
+                        <CategorySelectButton
+                            testID="button-category"
                             title={category.name}
                             onPress={() => handleOpenSelectCategoryModal()}
                         />
@@ -179,7 +182,7 @@ export function Register() {
                     /> 
                 </Form>
 
-                <Modal visible={categoryModalOpen}>
+                <Modal testID="modal-category" visible={categoryModalOpen}>
                     <CategorySelect
                         category={category}
                         setCategory={setCategory}
