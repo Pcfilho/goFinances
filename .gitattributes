@@ -1,3 +1,5 @@
 *.pbxproj -text
 
 *.java linguist-language=TypeScript
+
+*.html linguist-language=TypeScript
